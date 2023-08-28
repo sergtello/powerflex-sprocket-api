@@ -40,4 +40,8 @@ docker compose -f 'docker-compose-local.yml' up -d
 Wait until the containers are up then go to this address:
 http://127.0.0.1:8000/docs
 
-A 
+This web page containing the Swagger interface should load:
+
+![API Interactive Documentation](https://i.imgur.com/3WiPgKQ.png)
+
+The endpoints that require auth are marked with a lock, use the 'Authorize' button to add the API Key to every request. 
