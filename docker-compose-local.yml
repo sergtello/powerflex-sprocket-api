@@ -4,7 +4,7 @@ services:
     build:
       context: ./
     volumes:
-      - ./powerflex-sprocket-api/:/usr/src/Powerflex-Sprocket-API
+      - ./:/usr/src/Powerflex-Sprocket-API
       - /usr/src/Powerflex-Sprocket-API/venv
     restart: unless-stopped
     env_file:
