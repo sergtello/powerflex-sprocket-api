@@ -1,0 +1,32 @@
+version: "3.9"
+services:
+  app-tst:
+    build:
+      context: ./
+    volumes:
+      - ./powerflex-sprocket-api/:/usr/src/Powerflex-Sprocket-API
+      - /usr/src/Powerflex-Sprocket-API/venv
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    entrypoint: ["uvicorn","app.main:app","--host","0.0.0.0","--port","8000","--reload"]
+    ports:
+      - '8000:8000'
+    depends_on:
+      - db-tst
+
+  mongodb-tst:
+    image: bitnami/mongodb:6.0
+    volumes:
+      - mongodb_data:/bitnami/mongodb
+    env_file:
+      - .env.local
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  default:
+    name: 'powerflex-sprocket-api'

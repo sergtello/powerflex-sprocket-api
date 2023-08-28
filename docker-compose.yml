@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  app:
+    build:
+      context: ./
+    volumes:
+      - ./powerflex-sprocket-api/:/usr/src/Powerflex-Sprocket-API
+      - /usr/src/Powerflex-Sprocket-API/venv
+    restart: unless-stopped
+    env_file:
+      - .env
+
+networks:
+  default:
+    name: 'powerflex-sprocket-api'
