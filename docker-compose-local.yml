@@ -13,7 +13,7 @@ services:
     ports:
       - '8000:8000'
     depends_on:
-      - db-tst
+      - mongodb-tst
 
   mongodb-tst:
     image: bitnami/mongodb:6.0
