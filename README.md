@@ -31,6 +31,10 @@ DATABASE_NAME=powerflex-demo   # Default database name
 PATH_PREFIX=<PATH_PREFIX_FOR_ALL_ENDPOINTS>  # Path prefix appended at the beginning of every route
 
 API_KEY=<YOUR_API_KEY>  # API Key for basic authentication of the POST and PUT endpoints
+
+DOCS_AUTH_USERNAME=powerflex  # Username for basic auth of the interactive documentation
+DOCS_AUTH_PASSWORD=powerflex  # Password for basic auth of the interactive documentation
+
 ````
 
 In the 'powerflex-sprocket-api' directory run the following command:
@@ -47,6 +51,9 @@ Then go to this address:
 http://127.0.0.1:8000/docs
 
 If you had set the variable PATH_PREFIX, then the address should be: http://127.0.0.1:8000/{PATH_PREFIX}/docs
+
+
+When prompted for credentials use the ones defined in the DOCS_AUTH_USERNAME and DOCS_AUTH_PASSWORD variables.
 
 The web page that hosts the interactive Swagger documentation should load:
 

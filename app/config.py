@@ -16,8 +16,8 @@ class Settings(BaseSettings):
     mongodb_root_user: Optional[str] = 'admin'
     mongodb_root_password: Optional[str] = 'admin'
 
-    class Config:
-        env_file = ".env"
+    # class Config:
+    #     env_file = ".env"
 
 
 settings = Settings()
