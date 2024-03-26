@@ -26,9 +26,9 @@ In the same directory create a file named '.env.local' containing these variable
 MONGODB_ROOT_USER=<YOUR_MONGODB_USER>
 MONGODB_ROOT_PASSWORD=<YOUR_MONGODB_PASSWORD>
 
-DATABASE_URI=mongodb://<YOUR_MONGODB_USER>:<YOUR_MONGODB_PASSWORD>@mongodb-tst:27017/powerflex-demo?authSource=admin
 DATABASE_NAME=powerflex-demo   # Default database name
-DATABASE_ALIAS=powerflex-demo  # Default database alias
+
+PATH_PREFIX=<PATH_PREFIX_FOR_ALL_ENDPOINTS>  # Path prefix appended at the beginning of every route
 
 API_KEY=<YOUR_API_KEY>  # API Key for basic authentication of the POST and PUT endpoints
 ````
@@ -38,8 +38,15 @@ In the 'powerflex-sprocket-api' directory run the following command:
 docker compose -f 'docker-compose-local.yml' up -d
 ````
 
-Wait until the containers are up then go to this address:
+To generate the initial seed data from the json files wait until the containers are up and run the following: 
+````
+docker exec powerflex-sprocket_app-dev python seed.py sample/seed_sprocket_types.json sample/seed_factory_data.json
+````
+
+Then go to this address:
 http://127.0.0.1:8000/docs
+
+If you had set the variable PATH_PREFIX, then the address should be: http://127.0.0.1:8000/{PATH_PREFIX}/docs
 
 The web page that hosts the interactive Swagger documentation should load:
 

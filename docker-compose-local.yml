@@ -1,6 +1,7 @@
 version: "3.9"
+name: powerflex-sprocket
 services:
-  app-tst:
+  app-dev:
     build:
       context: ./
     volumes:
@@ -13,9 +14,9 @@ services:
     ports:
       - '8000:8000'
     depends_on:
-      - mongodb-tst
+      - mongodb-dev
 
-  mongodb-tst:
+  mongodb-dev:
     image: bitnami/mongodb:6.0
     volumes:
       - mongodb_data:/bitnami/mongodb
