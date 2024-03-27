@@ -44,7 +44,7 @@ docker compose -f 'docker-compose-local.yml' up -d
 
 To generate the initial seed data from the json files wait until the containers are up and run the following: 
 ````
-docker exec powerflex-sprocket_app-dev python seed.py sample/seed_sprocket_types.json sample/seed_factory_data.json
+docker exec -i powerflex-sprocket_app-dev python seed.py sample/seed_sprocket_types.json sample/seed_factory_data.json
 ````
 
 Then go to this address:
@@ -60,3 +60,9 @@ The web page that hosts the interactive Swagger documentation should load:
 ![API Interactive Documentation](https://i.imgur.com/3WiPgKQ.png)
 
 The endpoints that require auth are marked with a lock, use the 'Authorize' button to use the API Key in every request. 
+
+# Run tests
+To run the test execute the command:
+````
+docker exec -i powerflex-sprocket_app-dev pytest tests/ -s --disable-warnings
+````
