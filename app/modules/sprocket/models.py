@@ -1,6 +1,6 @@
 import mongoengine as me
 from app.config import settings
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class Sprocket(me.Document):
@@ -10,16 +10,16 @@ class Sprocket(me.Document):
     pitch = me.IntField(required=True, min_value=1)
 
     creation_time = me.DateTimeField(db_field="creationTime")
-    modified_time = me.DateTimeField(default=datetime.now, db_field="modifiedTime")
+    modified_time = me.DateTimeField(default=datetime.now(tz=timezone.utc), db_field="modifiedTime")
 
     def save(self, *args, **kwargs):
         if not self.creation_time:
-            self.creation_time = datetime.utcnow()
-        self.modified_time = datetime.utcnow()
+            self.creation_time = datetime.now(tz=timezone.utc)
+        self.modified_time = datetime.now(tz=timezone.utc)
         return super(Sprocket, self).save(*args, **kwargs)
 
     meta = {
         'db_alias': settings.database_name,
-        'collections': 'sprockets'
+        'collection': 'sprockets'
     }
 

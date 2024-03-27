@@ -5,7 +5,6 @@ from fastapi.openapi.utils import get_openapi
 from app.modules.sprocket.routes import router as sprocket_router
 from app.modules.factory.routes import router as factory_router
 from app.auth import service as auth
-from app import database
 from app.config import settings
 
 app = FastAPI(

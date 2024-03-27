@@ -1,23 +1,29 @@
 import json
-from app.modules.sprocket import models as md
+from app.modules.sprocket.models import Sprocket
 from app.modules.sprocket import schemas as sch
-from app.core.schemas import BaseResponse, ResponseStatus
+from app.core.schemas import ResponseStatus
 from mongoengine import queryset, errors
 from fastapi import HTTPException, status, UploadFile
+from typing import Type
 
 
-def get_all_sprockets(index: int, entries: int):
-    sprocket_data = [sch.StrSprocket.model_validate(sprocket, from_attributes=True) for sprocket in
-                     md.Sprocket.objects.skip(index - 1).limit(entries)]
+def get_all_sprockets(md_sprocket: Type[Sprocket], index: int, entries: int):
+    if index == 0:
+        sprocket_data = [sch.StrSprocket.model_validate(sprocket, from_attributes=True) for sprocket in
+                         md_sprocket.objects()]
+    else:
+        sprocket_data = [sch.StrSprocket.model_validate(sprocket, from_attributes=True) for sprocket in
+                         md_sprocket.objects.skip(index - 1).limit(entries)]
     return sch.GetAllSprocketsResponse(
         status=ResponseStatus.OK,
         msg=None,
         data=sprocket_data
     )
 
-def get_sprocket_by_id(sprocket_id: str):
+
+def get_sprocket_by_id(md_sprocket: Type[Sprocket], sprocket_id: str):
     try:
-        sprocket = md.Sprocket.objects.get(id=sprocket_id)
+        sprocket = md_sprocket.objects.get(id=sprocket_id)
     except queryset.DoesNotExist:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Sprocket {str(sprocket_id)} does not exist")
@@ -32,9 +38,9 @@ def get_sprocket_by_id(sprocket_id: str):
         )
 
 
-def register_sprocket(sprocket: sch.RegisterSprocketRequest):
+def register_sprocket(md_sprocket: Type[Sprocket], sprocket: sch.RegisterSprocketRequest):
     try:
-        new_sprocket = md.Sprocket(**sprocket.model_dump(exclude_none=True)).save()
+        new_sprocket = md_sprocket(**sprocket.model_dump(exclude_none=True)).save()
     except Exception as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail=f"Error registering sprocket, an exception occurred: {str(exc)}")
@@ -46,9 +52,9 @@ def register_sprocket(sprocket: sch.RegisterSprocketRequest):
         )
 
 
-def update_sprocket(sprocket_id: str, sprocket: sch.UpdateSprocketRequest):
+def update_sprocket(md_sprocket: Type[Sprocket], sprocket_id: str, sprocket: sch.UpdateSprocketRequest):
     try:
-        get_sprocket_by_id(sprocket_id)
+        get_sprocket_by_id(md_sprocket, sprocket_id)
     except HTTPException as exc:
         raise HTTPException(status_code=exc.status_code, detail=f"{exc.detail}")
     else:
@@ -57,14 +63,14 @@ def update_sprocket(sprocket_id: str, sprocket: sch.UpdateSprocketRequest):
             raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                                 detail=f"Error updating sprocket {sprocket_id}, no fields were provided")
         else:
-            updated_sprocket = md.Sprocket.objects(id=sprocket_id).modify(**fields_sprocket, new=True)
+            updated_sprocket = md_sprocket.objects(id=sprocket_id).modify(**fields_sprocket, new=True)
             return sch.UpdateSprocketResponse(
                 status=ResponseStatus.OK,
                 data=sch.SprocketOut.model_validate(updated_sprocket, from_attributes=True)
             )
 
 
-def upload_sprocket_file(sprocket_file: UploadFile):
+def upload_sprocket_file(md_sprocket: Type[Sprocket], sprocket_file: UploadFile):
     if sprocket_file.content_type is not None:
         if sprocket_file.content_type != 'application/json':
             raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -81,7 +87,7 @@ def upload_sprocket_file(sprocket_file: UploadFile):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail=f"Error uploading sprocket file, an exception occurred: {str(exc)}")
         else:
-            new_sprocket = md.Sprocket(**sp_schema.model_dump(exclude_none=True)).save()
+            new_sprocket = md_sprocket(**sp_schema.model_dump(exclude_none=True)).save()
             saved_sprockets.append(sch.StrSprocket.model_validate(new_sprocket, from_attributes=True))
 
     return sch.UploadSprocketFileResponse(

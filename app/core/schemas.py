@@ -11,7 +11,7 @@ class ResponseStatus(str, Enum):
 class BaseResponse(BaseModel):
     status: ResponseStatus = ResponseStatus.OK
     msg: Optional[str] = None
-    data: Optional[Union[dict, Any]] = {}
+    data: Optional[Union[dict, Any]] = None
 
 
 class BaseErrorResponse(BaseModel):

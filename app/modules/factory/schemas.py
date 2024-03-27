@@ -1,7 +1,7 @@
 import pydantic as pc
-from pydantic import BaseModel
-from datetime import datetime
-from typing import Optional, List
+from pydantic import BaseModel, ConfigDict
+from datetime import datetime, timezone
+from typing import Optional, List, Union
 from app.core.schemas import BaseResponse
 from app.core.schemas_extensions import PydanticObjectId
 
@@ -21,8 +21,8 @@ class FactoryBase(BaseModel):
 
 
 class RegisterFactoryRequest(FactoryBase):
-    model_config = {
-        "json_schema_extra": {
+    model_config = ConfigDict(
+        json_schema_extra={
             "examples": [
                 {
                     "factory": {
@@ -53,29 +53,30 @@ class RegisterFactoryRequest(FactoryBase):
                 }
             ]
         }
-    }
+    )
 
 
 class StrFactory(FactoryBase):
     id: PydanticObjectId = pc.Field(..., alias="_id")
     creation_time: datetime
 
-    class Config:
-        arbitrary_types_allowed = True
-        populate_by_name = True
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+        populate_by_name=True
+    )
 
 
 class GetFactoryResponse(BaseResponse):
     data: StrFactory
 
-    model_config = {
-        "json_schema_extra": {
+    model_config = ConfigDict(
+        json_schema_extra={
             "examples": [
                 {
                     "status": "OK",
                     "data": {
                         "_id": str(PydanticObjectId()),
-                        "creation_time": datetime.now(),
+                        "creation_time": datetime.now(tz=timezone.utc),
                         "factory": {
                             "chart_data": {
                                 "sprocket_production_actual": [
@@ -105,21 +106,21 @@ class GetFactoryResponse(BaseResponse):
                 }
             ]
         }
-    }
+    )
 
 
 class GetAllFactoriesResponse(BaseResponse):
     data: List[StrFactory]
 
-    model_config = {
-        "json_schema_extra": {
+    model_config = ConfigDict(
+        json_schema_extra={
             "examples": [
                 {
                     "status": "OK",
                     "data": [
                         {
                             "_id": str(PydanticObjectId()),
-                            "creation_time": datetime.now(),
+                            "creation_time": datetime.now(tz=timezone.utc),
                             "factory": {
                                 "chart_data": {
                                     "sprocket_production_actual": [
@@ -148,7 +149,7 @@ class GetAllFactoriesResponse(BaseResponse):
                         },
                         {
                             "_id": str(PydanticObjectId()),
-                            "creation_time": datetime.now(),
+                            "creation_time": datetime.now(tz=timezone.utc),
                             "factory": {
                                 "chart_data": {
                                     "sprocket_production_actual": [
@@ -179,7 +180,7 @@ class GetAllFactoriesResponse(BaseResponse):
                 }
             ]
         }
-    }
+    )
 
 
 class RegisterFactoryResponse(GetFactoryResponse):
@@ -187,8 +188,8 @@ class RegisterFactoryResponse(GetFactoryResponse):
 
 
 class UploadFactoryFileResponse(BaseResponse):
-    model_config = {
-        "json_schema_extra": {
+    model_config = ConfigDict(
+        json_schema_extra={
             "examples": [
                 {
                     "status": "OK",
@@ -196,5 +197,5 @@ class UploadFactoryFileResponse(BaseResponse):
                 }
             ]
         }
-    }
+    )
 

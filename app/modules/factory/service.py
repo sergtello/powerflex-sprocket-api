@@ -1,14 +1,19 @@
 import json
-from app.modules.factory import models as md
+from app.modules.factory.models import Factory
 from app.modules.factory import schemas as sch
-from app.core.schemas import BaseResponse, ResponseStatus
+from app.core.schemas import ResponseStatus
 from mongoengine import queryset, errors
 from fastapi import HTTPException, status, UploadFile
+from typing import Type
 
 
-def get_all_factory_data(index: int, entries: int):
-    factory_data = [sch.StrFactory.model_validate(factory, from_attributes=True) for factory in
-                    md.Factory.objects.skip(index - 1).limit(entries)]
+def get_all_factory_data(md_factory: Type[Factory], index: int, entries: int):
+    if index == 0:
+        factory_data = [sch.StrFactory.model_validate(factory, from_attributes=True) for factory in
+                        md_factory.objects()]
+    else:
+        factory_data = [sch.StrFactory.model_validate(factory, from_attributes=True) for factory in
+                        md_factory.objects.skip(index - 1).limit(entries)]
     return sch.GetAllFactoriesResponse(
         status=ResponseStatus.OK,
         msg=None,
@@ -16,9 +21,9 @@ def get_all_factory_data(index: int, entries: int):
     )
 
 
-def get_factory_data_by_id(factory_id: str):
+def get_factory_data_by_id(md_factory: Type[Factory], factory_id: str):
     try:
-        factory = md.Factory.objects.get(id=factory_id)
+        factory = md_factory.objects.get(id=factory_id)
     except queryset.DoesNotExist:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Factory {str(factory_id)} does not exist")
@@ -33,9 +38,9 @@ def get_factory_data_by_id(factory_id: str):
         )
 
 
-def register_factory(factory: sch.RegisterFactoryRequest):
+def register_factory(md_factory: Type[Factory], factory: sch.RegisterFactoryRequest):
     try:
-        new_factory = md.Factory(**factory.model_dump(exclude_none=True)).save()
+        new_factory = md_factory(**factory.model_dump(exclude_none=True)).save()
     except Exception as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail=f"Error registering factory, an exception occurred: {str(exc)}")
@@ -47,7 +52,7 @@ def register_factory(factory: sch.RegisterFactoryRequest):
         )
 
 
-def upload_factory_data_file(factory_data_file: UploadFile):
+def upload_factory_data_file(md_factory: Type[Factory], factory_data_file: UploadFile):
     if factory_data_file.content_type is not None:
         if factory_data_file.content_type != 'application/json':
             raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -64,7 +69,7 @@ def upload_factory_data_file(factory_data_file: UploadFile):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail=f"Error uploading factory file, an exception occurred: {str(exc)}")
         else:
-            new_factory_data = md.Factory(**fd_schema.model_dump(exclude_none=True)).save()
+            new_factory_data = md_factory(**fd_schema.model_dump(exclude_none=True)).save()
             saved_factory_data.append(sch.StrFactory.model_validate(new_factory_data, from_attributes=True))
 
     return sch.UploadFactoryFileResponse(

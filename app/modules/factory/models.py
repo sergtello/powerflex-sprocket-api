@@ -1,7 +1,7 @@
 import mongoengine as me
 from app.config import settings
 from mongoengine.errors import ValidationError
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class ChartData(me.EmbeddedDocument):
@@ -30,15 +30,15 @@ class Factory(me.Document):
     factory = me.EmbeddedDocumentField(FactoryChartData, required=True)
 
     creation_time = me.DateTimeField(db_field="creationTime")
-    modified_time = me.DateTimeField(default=datetime.now, db_field="modifiedTime")
+    modified_time = me.DateTimeField(default=datetime.now(tz=timezone.utc), db_field="modifiedTime")
 
     def save(self, *args, **kwargs):
         if not self.creation_time:
-            self.creation_time = datetime.utcnow()
-        self.modified_time = datetime.utcnow()
+            self.creation_time = datetime.now(tz=timezone.utc)
+        self.modified_time = datetime.now(tz=timezone.utc)
         return super(Factory, self).save(*args, **kwargs)
 
     meta = {
         'db_alias': settings.database_name,
-        'collections': 'factories'
+        'collection': 'factories'
     }

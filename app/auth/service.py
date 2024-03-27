@@ -7,8 +7,8 @@ from app.config import settings
 docs_auth = HTTPBasic()
 api_key = settings.api_key
 
-api_key_query_1 = APIKeyQuery(name='access_token', auto_error=False)
-api_key_header_1 = APIKeyHeader(name='access_token', auto_error=False)
+api_key_query_1 = APIKeyQuery(name='api_key', auto_error=False)
+api_key_header_1 = APIKeyHeader(name='api_key', auto_error=False)
 
 
 async def get_api_key(
@@ -20,7 +20,7 @@ async def get_api_key(
     elif api_key_header is not None and api_key_header == api_key:
         return api_key_header
     else:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Could not validate credentials")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Could not validate api key")
 
 
 def get_docs_username(credentials: HTTPBasicCredentials = Depends(docs_auth)):
