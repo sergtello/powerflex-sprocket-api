@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     mongodb_root_user: Optional[str] = 'admin'
     mongodb_root_password: Optional[str] = 'admin'
 
-    model_config = SettingsConfigDict(env_file='.env')
+    # model_config = SettingsConfigDict(env_file='.env')
 
 
 settings = Settings()
