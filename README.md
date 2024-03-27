@@ -15,6 +15,7 @@ https://docs.docker.com/engine/install/
 Go to the base directory.
 ````
 cd powerflex-sprocket-api
+git checkout feature/add-tests
 ````
 
 Use the .env.local.template as reference for setting the environment variables.
