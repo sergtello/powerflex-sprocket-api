@@ -21,8 +21,13 @@ git checkout feature/add-tests
 Use the .env.local.template as reference for setting the environment variables.
 Just change the values surrounded between '< >'.
 
-In the same directory create a file named '.env.local' containing these variables.
+In the same directory create a file named '.env.local' containing these variables. You can use the command:
 
+````
+cp .env.local.template .env.local
+````
+
+## .env.local file
 ````
 MONGODB_ROOT_USER=<YOUR_MONGODB_USER>
 MONGODB_ROOT_PASSWORD=<YOUR_MONGODB_PASSWORD>
@@ -45,7 +50,7 @@ docker compose -f 'docker-compose-local.yml' up -d
 
 To generate the initial seed data from the json files wait until the containers are up and run the following: 
 ````
-docker exec -i powerflex-sprocket_app-dev python seed.py sample/seed_sprocket_types.json sample/seed_factory_data.json
+docker exec -i $(docker ps -qf "ancestor=powerflex-sprocket-app-dev") python seed.py sample/seed_sprocket_types.json sample/seed_factory_data.json
 ````
 
 Then go to this address:
@@ -63,7 +68,7 @@ The web page that hosts the interactive Swagger documentation should load:
 The endpoints that require auth are marked with a lock, use the 'Authorize' button to use the API Key in every request. 
 
 # Run tests
-To run the test execute the command:
+To run the tests execute the command:
 ````
-docker exec -i powerflex-sprocket_app-dev pytest tests/ -s --disable-warnings
+docker exec -i $(docker ps -qf "ancestor=powerflex-sprocket-app-dev") pytest tests/ -s --disable-warnings
 ````

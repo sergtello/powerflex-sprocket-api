@@ -5,6 +5,8 @@ from app import database
 from fastapi import UploadFile
 from app.modules.sprocket.service import upload_sprocket_file
 from app.modules.factory.service import upload_factory_data_file
+from app.modules.sprocket.models import Sprocket
+from app.modules.factory.models import Factory
 from pathlib import Path
 
 
@@ -28,7 +30,7 @@ if not Path(factory_seed_file).exists():
 try:
     with open(sprocket_seed_file, 'rb') as sprocket_file:
         sprocket_f = UploadFile(file=sprocket_file)
-        upload_sprocket_response = upload_sprocket_file(sprocket_f)
+        upload_sprocket_response = upload_sprocket_file(Sprocket, sprocket_f)
 
     if upload_sprocket_response.status == 'OK':
         print(f'Generating sprocket data from : {sprocket_seed_file}')
@@ -44,7 +46,7 @@ except Exception as e:
 try:
     with open(factory_seed_file, 'rb') as factory_file:
         factory_f = UploadFile(file=factory_file)
-        upload_factory_response = upload_factory_data_file(factory_f)
+        upload_factory_response = upload_factory_data_file(Factory, factory_f)
 
     if upload_factory_response.status == 'OK':
         print(f'Generating factory data from : {factory_seed_file}')
